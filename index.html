@@ -259,6 +259,82 @@
             padding: 0.5rem 0;
         }
 
+        .time-savings-table {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+        }
+
+        .time-savings-table h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .time-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .time-table th {
+            background: #f8f8f8;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .time-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .time-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .time-table .label-col {
+            font-weight: 500;
+            color: #666;
+        }
+
+        .time-table .current-col {
+            text-align: center;
+            color: #1a1a1a;
+        }
+
+        .time-table .new-col {
+            text-align: center;
+            color: #1a1a1a;
+        }
+
+        .time-table .diff-col {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .time-table .positive {
+            color: #2e7d32;
+        }
+
+        .time-table .negative {
+            color: #c62828;
+        }
+
+        .time-table .neutral {
+            color: #666;
+        }
+
+        .time-table tfoot td {
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #1a1a1a;
+        }
+
         @media (max-width: 768px) {
             .grid, .results-grid, .pros-cons {
                 grid-template-columns: 1fr;
@@ -506,6 +582,67 @@
             </div>
         </div>
 
+        <!-- Time Savings Table -->
+        <div class="time-savings-table">
+            <h3>Time Breakdown Comparison</h3>
+            <table class="time-table">
+                <thead>
+                    <tr>
+                        <th class="label-col">Metric</th>
+                        <th class="current-col">Current Job</th>
+                        <th class="new-col">New Offer</th>
+                        <th class="diff-col">Difference</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="label-col">Commute per Day</td>
+                        <td class="current-col" id="time-daily-current">120 min</td>
+                        <td class="new-col" id="time-daily-new">40 min</td>
+                        <td class="diff-col positive" id="time-daily-diff">-80 min</td>
+                    </tr>
+                    <tr>
+                        <td class="label-col">Commute per Week</td>
+                        <td class="current-col" id="time-weekly-current">6 hours</td>
+                        <td class="new-col" id="time-weekly-new">2 hours</td>
+                        <td class="diff-col positive" id="time-weekly-diff">-4 hours</td>
+                    </tr>
+                    <tr>
+                        <td class="label-col">Commute per Year</td>
+                        <td class="current-col" id="time-yearly-current">300 hours</td>
+                        <td class="new-col" id="time-yearly-new">100 hours</td>
+                        <td class="diff-col positive" id="time-yearly-diff">-200 hours</td>
+                    </tr>
+                    <tr>
+                        <td class="label-col">Work Hours per Week</td>
+                        <td class="current-col" id="time-work-current">32 hours</td>
+                        <td class="new-col" id="time-work-new">36 hours</td>
+                        <td class="diff-col negative" id="time-work-diff">+4 hours</td>
+                    </tr>
+                    <tr>
+                        <td class="label-col">Miles per Day</td>
+                        <td class="current-col" id="time-miles-current">43 miles</td>
+                        <td class="new-col" id="time-miles-new">15.4 miles</td>
+                        <td class="diff-col positive" id="time-miles-diff">-27.6 miles</td>
+                    </tr>
+                    <tr>
+                        <td class="label-col">Miles per Year</td>
+                        <td class="current-col" id="time-milesyear-current">6,450 miles</td>
+                        <td class="new-col" id="time-milesyear-new">2,310 miles</td>
+                        <td class="diff-col positive" id="time-milesyear-diff">-4,140 miles</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="label-col">Total Weekly Time (Work + Commute)</td>
+                        <td class="current-col" id="time-total-current">38 hours</td>
+                        <td class="new-col" id="time-total-new">38 hours</td>
+                        <td class="diff-col neutral" id="time-total-diff">0 hours</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
         <!-- Pros and Cons -->
         <div class="pros-cons">
             <div class="pros">
@@ -708,6 +845,62 @@
             document.getElementById('difference').textContent = (netDiff >= 0 ? '+' : '') + formatCurrency(netDiff) + '/year';
             document.getElementById('difference').style.color = netDiff >= 0 ? '#2e7d32' : '#c62828';
             document.getElementById('time-saved').textContent = Math.round(timeSaved) + ' hours/year';
+
+            // Update time savings table
+            const currentWeeklyCommute = (currentTime * commuteDays) / 60;
+            const newWeeklyCommute = (newTime * commuteDays) / 60;
+            const weeklyCommuteDiff = currentWeeklyCommute - newWeeklyCommute;
+            
+            const currentTotalWeekly = currentHours + currentWeeklyCommute;
+            const newTotalWeekly = newHours + newWeeklyCommute;
+            const totalWeeklyDiff = newTotalWeekly - currentTotalWeekly;
+
+            const milesPerYear = currentMiles * commuteDays * weeks;
+            const newMilesPerYear = newMiles * commuteDays * weeks;
+            const milesDiff = currentMiles - newMiles;
+            const milesYearDiff = milesPerYear - newMilesPerYear;
+
+            // Daily
+            document.getElementById('time-daily-current').textContent = currentTime + ' min';
+            document.getElementById('time-daily-new').textContent = newTime + ' min';
+            document.getElementById('time-daily-diff').textContent = (newTime - currentTime >= 0 ? '+' : '') + (newTime - currentTime) + ' min';
+            document.getElementById('time-daily-diff').className = 'diff-col ' + (newTime < currentTime ? 'positive' : 'negative');
+
+            // Weekly commute
+            document.getElementById('time-weekly-current').textContent = currentWeeklyCommute.toFixed(1) + ' hours';
+            document.getElementById('time-weekly-new').textContent = newWeeklyCommute.toFixed(1) + ' hours';
+            document.getElementById('time-weekly-diff').textContent = (weeklyCommuteDiff >= 0 ? '-' : '+') + Math.abs(weeklyCommuteDiff).toFixed(1) + ' hours';
+            document.getElementById('time-weekly-diff').className = 'diff-col ' + (weeklyCommuteDiff > 0 ? 'positive' : 'negative');
+
+            // Yearly commute
+            document.getElementById('time-yearly-current').textContent = Math.round(currentCommuteHours) + ' hours';
+            document.getElementById('time-yearly-new').textContent = Math.round(newCommuteHours) + ' hours';
+            document.getElementById('time-yearly-diff').textContent = (timeSaved >= 0 ? '-' : '+') + Math.abs(Math.round(timeSaved)) + ' hours';
+            document.getElementById('time-yearly-diff').className = 'diff-col ' + (timeSaved > 0 ? 'positive' : 'negative');
+
+            // Work hours
+            document.getElementById('time-work-current').textContent = currentHours + ' hours';
+            document.getElementById('time-work-new').textContent = newHours + ' hours';
+            document.getElementById('time-work-diff').textContent = (newHours - currentHours >= 0 ? '+' : '') + (newHours - currentHours) + ' hours';
+            document.getElementById('time-work-diff').className = 'diff-col ' + (newHours > currentHours ? 'negative' : 'positive');
+
+            // Miles per day
+            document.getElementById('time-miles-current').textContent = currentMiles + ' miles';
+            document.getElementById('time-miles-new').textContent = newMiles + ' miles';
+            document.getElementById('time-miles-diff').textContent = (milesDiff >= 0 ? '-' : '+') + Math.abs(milesDiff.toFixed(1)) + ' miles';
+            document.getElementById('time-miles-diff').className = 'diff-col ' + (milesDiff > 0 ? 'positive' : 'negative');
+
+            // Miles per year
+            document.getElementById('time-milesyear-current').textContent = formatNumber(Math.round(milesPerYear)) + ' miles';
+            document.getElementById('time-milesyear-new').textContent = formatNumber(Math.round(newMilesPerYear)) + ' miles';
+            document.getElementById('time-milesyear-diff').textContent = (milesYearDiff >= 0 ? '-' : '+') + formatNumber(Math.abs(Math.round(milesYearDiff))) + ' miles';
+            document.getElementById('time-milesyear-diff').className = 'diff-col ' + (milesYearDiff > 0 ? 'positive' : 'negative');
+
+            // Total weekly time
+            document.getElementById('time-total-current').textContent = currentTotalWeekly.toFixed(1) + ' hours';
+            document.getElementById('time-total-new').textContent = newTotalWeekly.toFixed(1) + ' hours';
+            document.getElementById('time-total-diff').textContent = (totalWeeklyDiff >= 0 ? '+' : '') + totalWeeklyDiff.toFixed(1) + ' hours';
+            document.getElementById('time-total-diff').className = 'diff-col ' + (Math.abs(totalWeeklyDiff) < 0.5 ? 'neutral' : (totalWeeklyDiff > 0 ? 'negative' : 'positive'));
 
             // Update pros/cons dynamically
             updateProsCons(netDiff, timeSaved, currentTime, newTime, currentTollCost, newTollCost, 
