@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Offer Calculator | Compare Compensation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #1a1a1a;
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1a1a1a;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 3rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #1a1a1a;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            cursor: pointer;
+            border: none;
+        }
+
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .comparison {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .comparison h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .result-card {
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .result-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #1a1a1a;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        .result-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .highlight {
+            background: #e8f5e9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .highlight h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2e7d32;
+        }
+
+        .highlight .big-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .pros, .cons {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .pros h3 {
+            color: #2e7d32;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .cons h3 {
+            color: #c62828;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .pros ul, .cons ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .pros li, .cons li {
+            padding: 0.75rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .pros li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .cons li::before {
+            content: "✗";
+            position: absolute;
+            left: 0;
+            color: #c62828;
+            font-weight: bold;
+        }
+
+        .time-breakdown {
+            background: #fff3e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .time-breakdown h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #e65100;
+        }
+
+        .time-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .grid, .results-grid, .pros-cons {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Job Offer Calculator</h1>
+        <p class="subtitle">Compare total compensation including commute costs and time</p>
+
+        <div class="grid">
+            <!-- Current Job -->
+            <div class="card">
+                <h2>Current Job</h2>
+                <div class="input-group">
+                    <label>Annual Salary (Pre-Tax)</label>
+                    <input type="range" id="current-salary" min="50000" max="200000" step="1000" value="131556">
+                    <div class="value-display">
+                        <span>$<span id="current-salary-value">131,556</span></span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Hours per Week</label>
+                    <input type="range" id="current-hours" min="20" max="40" step="1" value="32">
+                    <div class="value-display">
+                        <span><span id="current-hours-value">32</span> hours</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Commute Miles per Day (round trip)</label>
+                    <input type="range" id="current-miles" min="0" max="100" step="1" value="43">
+                    <div class="value-display">
+                        <span><span id="current-miles-value">43</span> miles</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Commute Time (total per day, minutes)</label>
+                    <input type="range" id="current-time" min="0" max="180" step="5" value="120">
+                    <div class="value-display">
+                        <span><span id="current-time-value">120</span> min</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Bridge Toll per Day</label>
+                    <input type="range" id="current-toll" min="0" max="20" step="0.50" value="8.50">
+                    <div class="value-display">
+                        <span>$<span id="current-toll-value">8.50</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Offer -->
+            <div class="card">
+                <h2>New Offer (.9 FTE)</h2>
+                <div class="input-group">
+                    <label>Annual Salary (Pre-Tax)</label>
+                    <input type="range" id="new-salary" min="50000" max="200000" step="1000" value="135000">
+                    <div class="value-display">
+                        <span>$<span id="new-salary-value">135,000</span></span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Hours per Week</label>
+                    <input type="range" id="new-hours" min="20" max="40" step="1" value="36">
+                    <div class="value-display">
+                        <span><span id="new-hours-value">36</span> hours</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Commute Miles per Day (round trip)</label>
+                    <input type="range" id="new-miles" min="0" max="100" step="1" value="15.4">
+                    <div class="value-display">
+                        <span><span id="new-miles-value">15.4</span> miles</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Commute Time (total per day, minutes)</label>
+                    <input type="range" id="new-time" min="0" max="180" step="5" value="40">
+                    <div class="value-display">
+                        <span><span id="new-time-value">40</span> min</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Bridge Toll per Day</label>
+                    <input type="range" id="new-toll" min="0" max="20" step="0.50" value="0">
+                    <div class="value-display">
+                        <span>$<span id="new-toll-value">0.00</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Global Parameters -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <h2>Global Parameters</h2>
+            <div class="grid">
+                <div class="input-group">
+                    <label>Gas Price per Gallon</label>
+                    <input type="range" id="gas-price" min="3" max="8" step="0.10" value="5.00">
+                    <div class="value-display">
+                        <span>$<span id="gas-price-value">5.00</span></span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Car MPG</label>
+                    <input type="range" id="mpg" min="15" max="50" step="1" value="32">
+                    <div class="value-display">
+                        <span><span id="mpg-value">32</span> MPG</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Weeks Worked per Year</label>
+                    <input type="range" id="weeks" min="48" max="52" step="1" value="50">
+                    <div class="value-display">
+                        <span><span id="weeks-value">50</span> weeks</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Commute Days per Week</label>
+                    <input type="range" id="commute-days" min="1" max="5" step="1" value="3">
+                    <div class="value-display">
+                        <span><span id="commute-days-value">3</span> days</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Results -->
+        <div class="comparison">
+            <h2>Financial Comparison</h2>
+            <div class="results-grid">
+                <div class="result-card">
+                    <h3>Current Job</h3>
+                    <div class="result-row">
+                        <span class="result-label">Gross Annual Salary</span>
+                        <span class="result-value" id="current-gross">$131,556</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Federal Tax</span>
+                        <span class="result-value" id="current-federal">-$22,465</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">California Tax</span>
+                        <span class="result-value" id="current-state">-$7,893</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">FICA (SS + Medicare)</span>
+                        <span class="result-value" id="current-fica">-$10,064</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">After-Tax Income</span>
+                        <span class="result-value" id="current-aftertax">$91,134</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Annual Gas Cost</span>
+                        <span class="result-value" id="current-gas">-$1,007</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Annual Toll Cost</span>
+                        <span class="result-value" id="current-tollcost">-$1,275</span>
+                    </div>
+                    <div class="result-row" style="border-top: 2px solid #1a1a1a; margin-top: 0.5rem; padding-top: 1rem;">
+                        <span class="result-label" style="font-weight: 600;">Net Take-Home</span>
+                        <span class="result-value" style="font-size: 1.3rem; color: #2e7d32;" id="current-net">$88,852</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Annual Commute Hours</span>
+                        <span class="result-value" id="current-commute-hours">300 hours</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Hourly Rate (net)</span>
+                        <span class="result-value" id="current-hourly">$55.53</span>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <h3>New Offer</h3>
+                    <div class="result-row">
+                        <span class="result-label">Gross Annual Salary</span>
+                        <span class="result-value" id="new-gross">$135,000</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Federal Tax</span>
+                        <span class="result-value" id="new-federal">-$23,118</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">California Tax</span>
+                        <span class="result-value" id="new-state">-$8,121</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">FICA (SS + Medicare)</span>
+                        <span class="result-value" id="new-fica">-$10,328</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">After-Tax Income</span>
+                        <span class="result-value" id="new-aftertax">$93,433</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Annual Gas Cost</span>
+                        <span class="result-value" id="new-gas">-$361</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Annual Toll Cost</span>
+                        <span class="result-value" id="new-tollcost">$0</span>
+                    </div>
+                    <div class="result-row" style="border-top: 2px solid #1a1a1a; margin-top: 0.5rem; padding-top: 1rem;">
+                        <span class="result-label" style="font-weight: 600;">Net Take-Home</span>
+                        <span class="result-value" style="font-size: 1.3rem; color: #2e7d32;" id="new-net">$93,072</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Annual Commute Hours</span>
+                        <span class="result-value" id="new-commute-hours">100 hours</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Hourly Rate (net)</span>
+                        <span class="result-value" id="new-hourly">$51.71</span>
+                    </div>
+
+                    <div class="time-breakdown">
+                        <h4>FTE Breakdown (.9 FTE)</h4>
+                        <div class="time-row">
+                            <span>Patient Contact Time:</span>
+                            <strong id="patient-time">32.4 hours/week</strong>
+                        </div>
+                        <div class="time-row">
+                            <span>Admin Time:</span>
+                            <strong id="admin-time">3.6 hours/week</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight">
+                <h4>Net Difference</h4>
+                <div class="big-number" id="difference">+$4,220/year</div>
+                <div style="margin-top: 1rem; font-size: 1.1rem;">
+                    New offer gives you <strong id="time-saved">200 hours/year</strong> of saved commute time
+                </div>
+            </div>
+        </div>
+
+        <!-- Pros and Cons -->
+        <div class="pros-cons">
+            <div class="pros">
+                <h3>Pros of New Offer</h3>
+                <ul id="pros-list">
+                    <li>Higher net take-home pay (+$4,220/year)</li>
+                    <li>200 hours less commute time per year</li>
+                    <li>64% shorter commute (40 min vs 120 min)</li>
+                    <li>No bridge toll ($1,275 saved)</li>
+                    <li>Lower gas costs ($646 saved)</li>
+                    <li>More hours per week (36 vs 32)</li>
+                    <li>Less wear on vehicle</li>
+                    <li>Better work-life balance</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h3>Cons of New Offer</h3>
+                <ul id="cons-list">
+                    <li>Lower hourly rate ($51.71 vs $55.53)</li>
+                    <li>More hours committed per week</li>
+                    <li>0.9 FTE vs 0.8 FTE (more time commitment)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tax calculation functions
+        function calculateFederalTax(income) {
+            // 2026 Federal tax brackets (single filer)
+            const brackets = [
+                { limit: 11600, rate: 0.10 },
+                { limit: 47150, rate: 0.12 },
+                { limit: 100525, rate: 0.22 },
+                { limit: 191950, rate: 0.24 },
+                { limit: 243725, rate: 0.32 },
+                { limit: 609350, rate: 0.35 },
+                { limit: Infinity, rate: 0.37 }
+            ];
+
+            let tax = 0;
+            let previousLimit = 0;
+
+            for (let bracket of brackets) {
+                if (income > bracket.limit) {
+                    tax += (bracket.limit - previousLimit) * bracket.rate;
+                    previousLimit = bracket.limit;
+                } else {
+                    tax += (income - previousLimit) * bracket.rate;
+                    break;
+                }
+            }
+
+            return tax;
+        }
+
+        function calculateCaliforniaTax(income) {
+            // California tax brackets (single filer)
+            const brackets = [
+                { limit: 10412, rate: 0.01 },
+                { limit: 24684, rate: 0.02 },
+                { limit: 38959, rate: 0.04 },
+                { limit: 54081, rate: 0.06 },
+                { limit: 68350, rate: 0.08 },
+                { limit: 349137, rate: 0.093 },
+                { limit: 418961, rate: 0.103 },
+                { limit: 698271, rate: 0.113 },
+                { limit: Infinity, rate: 0.123 }
+            ];
+
+            let tax = 0;
+            let previousLimit = 0;
+
+            for (let bracket of brackets) {
+                if (income > bracket.limit) {
+                    tax += (bracket.limit - previousLimit) * bracket.rate;
+                    previousLimit = bracket.limit;
+                } else {
+                    tax += (income - previousLimit) * bracket.rate;
+                    break;
+                }
+            }
+
+            return tax;
+        }
+
+        function calculateFICA(income) {
+            const ssWageBase = 168600; // 2026 estimate
+            const ssTax = Math.min(income, ssWageBase) * 0.062;
+            const medicareTax = income * 0.0145;
+            return ssTax + medicareTax;
+        }
+
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(num);
+        }
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat('en-US').format(num);
+        }
+
+        function calculate() {
+            // Get all input values
+            const currentSalary = parseFloat(document.getElementById('current-salary').value);
+            const currentHours = parseFloat(document.getElementById('current-hours').value);
+            const currentMiles = parseFloat(document.getElementById('current-miles').value);
+            const currentTime = parseFloat(document.getElementById('current-time').value);
+            const currentToll = parseFloat(document.getElementById('current-toll').value);
+
+            const newSalary = parseFloat(document.getElementById('new-salary').value);
+            const newHours = parseFloat(document.getElementById('new-hours').value);
+            const newMiles = parseFloat(document.getElementById('new-miles').value);
+            const newTime = parseFloat(document.getElementById('new-time').value);
+            const newToll = parseFloat(document.getElementById('new-toll').value);
+
+            const gasPrice = parseFloat(document.getElementById('gas-price').value);
+            const mpg = parseFloat(document.getElementById('mpg').value);
+            const weeks = parseFloat(document.getElementById('weeks').value);
+            const commuteDays = parseFloat(document.getElementById('commute-days').value);
+
+            // Calculate taxes for current job
+            const currentFederal = calculateFederalTax(currentSalary);
+            const currentState = calculateCaliforniaTax(currentSalary);
+            const currentFica = calculateFICA(currentSalary);
+            const currentAfterTax = currentSalary - currentFederal - currentState - currentFica;
+
+            // Calculate commute costs for current job
+            const currentAnnualMiles = currentMiles * commuteDays * weeks;
+            const currentGasCost = (currentAnnualMiles / mpg) * gasPrice;
+            const currentTollCost = currentToll * commuteDays * weeks;
+            const currentNet = currentAfterTax - currentGasCost - currentTollCost;
+
+            // Calculate commute time
+            const currentCommuteHours = (currentTime / 60) * commuteDays * weeks;
+
+            // Calculate hourly rate
+            const currentWorkedHours = currentHours * weeks;
+            const currentHourly = currentNet / currentWorkedHours;
+
+            // Calculate taxes for new job
+            const newFederal = calculateFederalTax(newSalary);
+            const newState = calculateCaliforniaTax(newSalary);
+            const newFica = calculateFICA(newSalary);
+            const newAfterTax = newSalary - newFederal - newState - newFica;
+
+            // Calculate commute costs for new job
+            const newAnnualMiles = newMiles * commuteDays * weeks;
+            const newGasCost = (newAnnualMiles / mpg) * gasPrice;
+            const newTollCost = newToll * commuteDays * weeks;
+            const newNet = newAfterTax - newGasCost - newTollCost;
+
+            // Calculate commute time
+            const newCommuteHours = (newTime / 60) * commuteDays * weeks;
+
+            // Calculate hourly rate
+            const newWorkedHours = newHours * weeks;
+            const newHourly = newNet / newWorkedHours;
+
+            // Calculate FTE breakdown for new job (.9 FTE)
+            const fte = 0.9;
+            const patientContactTime = 36 * fte; // 36 hours per 1.0 FTE
+            const adminTime = 4 * fte; // 4 hours (half day) per 1.0 FTE
+
+            // Update DOM - Current Job
+            document.getElementById('current-gross').textContent = formatCurrency(currentSalary);
+            document.getElementById('current-federal').textContent = '-' + formatCurrency(currentFederal);
+            document.getElementById('current-state').textContent = '-' + formatCurrency(currentState);
+            document.getElementById('current-fica').textContent = '-' + formatCurrency(currentFica);
+            document.getElementById('current-aftertax').textContent = formatCurrency(currentAfterTax);
+            document.getElementById('current-gas').textContent = '-' + formatCurrency(currentGasCost);
+            document.getElementById('current-tollcost').textContent = currentTollCost > 0 ? '-' + formatCurrency(currentTollCost) : '$0';
+            document.getElementById('current-net').textContent = formatCurrency(currentNet);
+            document.getElementById('current-commute-hours').textContent = Math.round(currentCommuteHours) + ' hours';
+            document.getElementById('current-hourly').textContent = '$' + currentHourly.toFixed(2);
+
+            // Update DOM - New Job
+            document.getElementById('new-gross').textContent = formatCurrency(newSalary);
+            document.getElementById('new-federal').textContent = '-' + formatCurrency(newFederal);
+            document.getElementById('new-state').textContent = '-' + formatCurrency(newState);
+            document.getElementById('new-fica').textContent = '-' + formatCurrency(newFica);
+            document.getElementById('new-aftertax').textContent = formatCurrency(newAfterTax);
+            document.getElementById('new-gas').textContent = '-' + formatCurrency(newGasCost);
+            document.getElementById('new-tollcost').textContent = newTollCost > 0 ? '-' + formatCurrency(newTollCost) : '$0';
+            document.getElementById('new-net').textContent = formatCurrency(newNet);
+            document.getElementById('new-commute-hours').textContent = Math.round(newCommuteHours) + ' hours';
+            document.getElementById('new-hourly').textContent = '$' + newHourly.toFixed(2);
+
+            // FTE breakdown
+            document.getElementById('patient-time').textContent = patientContactTime.toFixed(1) + ' hours/week';
+            document.getElementById('admin-time').textContent = adminTime.toFixed(1) + ' hours/week';
+
+            // Difference
+            const netDiff = newNet - currentNet;
+            const timeSaved = currentCommuteHours - newCommuteHours;
+            document.getElementById('difference').textContent = (netDiff >= 0 ? '+' : '') + formatCurrency(netDiff) + '/year';
+            document.getElementById('difference').style.color = netDiff >= 0 ? '#2e7d32' : '#c62828';
+            document.getElementById('time-saved').textContent = Math.round(timeSaved) + ' hours/year';
+
+            // Update pros/cons dynamically
+            updateProsCons(netDiff, timeSaved, currentTime, newTime, currentTollCost, newTollCost, 
+                          currentGasCost, newGasCost, currentHours, newHours, currentHourly, newHourly);
+        }
+
+        function updateProsCons(netDiff, timeSaved, currentTime, newTime, currentToll, newToll,
+                               currentGas, newGas, currentHours, newHours, currentHourly, newHourly) {
+            const prosList = document.getElementById('pros-list');
+            const consList = document.getElementById('cons-list');
+            
+            let pros = [];
+            let cons = [];
+
+            // Pros
+            if (netDiff > 0) {
+                pros.push(`Higher net take-home pay (+${formatCurrency(netDiff)}/year)`);
+            }
+            if (timeSaved > 0) {
+                pros.push(`${Math.round(timeSaved)} hours less commute time per year`);
+                const pctShorter = ((currentTime - newTime) / currentTime * 100).toFixed(0);
+                pros.push(`${pctShorter}% shorter commute (${newTime} min vs ${currentTime} min)`);
+            }
+            if (currentToll > newToll) {
+                pros.push(`No bridge toll (${formatCurrency(currentToll - newToll)} saved)`);
+            }
+            if (currentGas > newGas) {
+                pros.push(`Lower gas costs (${formatCurrency(currentGas - newGas)} saved)`);
+            }
+            if (newHours > currentHours) {
+                pros.push(`More hours per week (${newHours} vs ${currentHours})`);
+            }
+            pros.push('Less wear on vehicle');
+            pros.push('Better work-life balance');
+
+            // Cons
+            if (newHourly < currentHourly) {
+                cons.push(`Lower hourly rate ($${newHourly.toFixed(2)} vs $${currentHourly.toFixed(2)})`);
+            }
+            if (newHours > currentHours) {
+                cons.push('More hours committed per week');
+            }
+            cons.push('0.9 FTE vs 0.8 FTE (more time commitment)');
+
+            // Render
+            prosList.innerHTML = pros.map(p => `<li>${p}</li>`).join('');
+            consList.innerHTML = cons.map(c => `<li>${c}</li>`).join('');
+        }
+
+        // Setup all sliders
+        function setupSlider(id, valueId, formatter) {
+            const slider = document.getElementById(id);
+            const display = document.getElementById(valueId);
+            
+            slider.addEventListener('input', function() {
+                display.textContent = formatter(this.value);
+                calculate();
+            });
+        }
+
+        // Initialize
+        setupSlider('current-salary', 'current-salary-value', v => formatNumber(v));
+        setupSlider('current-hours', 'current-hours-value', v => v);
+        setupSlider('current-miles', 'current-miles-value', v => v);
+        setupSlider('current-time', 'current-time-value', v => v);
+        setupSlider('current-toll', 'current-toll-value', v => parseFloat(v).toFixed(2));
+
+        setupSlider('new-salary', 'new-salary-value', v => formatNumber(v));
+        setupSlider('new-hours', 'new-hours-value', v => v);
+        setupSlider('new-miles', 'new-miles-value', v => v);
+        setupSlider('new-time', 'new-time-value', v => v);
+        setupSlider('new-toll', 'new-toll-value', v => parseFloat(v).toFixed(2));
+
+        setupSlider('gas-price', 'gas-price-value', v => parseFloat(v).toFixed(2));
+        setupSlider('mpg', 'mpg-value', v => v);
+        setupSlider('weeks', 'weeks-value', v => v);
+        setupSlider('commute-days', 'commute-days-value', v => v);
+
+        // Initial calculation
+        calculate();
+    </script>
+</body>
+</html>
