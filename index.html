@@ -346,29 +346,65 @@
 
             .time-savings-table {
                 padding: 1rem;
-                overflow-x: auto;
             }
 
-            .time-table {
-                font-size: 0.85rem;
-                min-width: 600px;
+            .time-table thead {
+                display: none;
             }
 
-            .time-table th,
-            .time-table td {
-                padding: 0.75rem 0.5rem;
+            .time-table,
+            .time-table tbody {
+                display: block;
             }
 
-            .time-table th:first-child,
-            .time-table td:first-child {
-                position: sticky;
-                left: 0;
-                background: white;
-                z-index: 1;
-            }
-
-            .time-table th:first-child {
+            .time-table tr {
+                display: block;
+                margin-bottom: 1.5rem;
                 background: #f8f8f8;
+                border-radius: 8px;
+                padding: 1rem;
+            }
+
+            .time-table tfoot tr {
+                background: #e8f5e9;
+                margin-top: 1rem;
+                border: 2px solid #2e7d32;
+            }
+
+            .time-table td {
+                display: block;
+                border: none;
+                padding: 0.5rem 0;
+                text-align: left !important;
+            }
+
+            .time-table td:first-child {
+                font-size: 1.05rem;
+                font-weight: 600;
+                color: #1a1a1a;
+                margin-bottom: 0.75rem;
+                padding-bottom: 0.75rem;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .time-table td:not(:first-child) {
+                display: flex;
+                justify-content: space-between;
+                padding: 0.4rem 0;
+            }
+
+            .time-table td:not(:first-child)::before {
+                content: attr(data-label);
+                font-weight: 500;
+                color: #666;
+            }
+
+            .time-table tfoot td {
+                padding-top: 0;
+            }
+
+            .time-table tfoot td:first-child {
+                padding-bottom: 0.5rem;
             }
         }
     </style>
@@ -624,47 +660,47 @@
                 <tbody>
                     <tr>
                         <td class="label-col">Commute per Day</td>
-                        <td class="current-col" id="time-daily-current">120 min</td>
-                        <td class="new-col" id="time-daily-new">40 min</td>
-                        <td class="diff-col positive" id="time-daily-diff">-80 min</td>
+                        <td class="current-col" data-label="Current Job" id="time-daily-current">120 min</td>
+                        <td class="new-col" data-label="New Offer" id="time-daily-new">40 min</td>
+                        <td class="diff-col positive" data-label="Difference" id="time-daily-diff">-80 min</td>
                     </tr>
                     <tr>
                         <td class="label-col">Commute per Week</td>
-                        <td class="current-col" id="time-weekly-current">6 hours</td>
-                        <td class="new-col" id="time-weekly-new">2 hours</td>
-                        <td class="diff-col positive" id="time-weekly-diff">-4 hours</td>
+                        <td class="current-col" data-label="Current Job" id="time-weekly-current">6 hours</td>
+                        <td class="new-col" data-label="New Offer" id="time-weekly-new">2 hours</td>
+                        <td class="diff-col positive" data-label="Difference" id="time-weekly-diff">-4 hours</td>
                     </tr>
                     <tr>
                         <td class="label-col">Commute per Year</td>
-                        <td class="current-col" id="time-yearly-current">300 hours</td>
-                        <td class="new-col" id="time-yearly-new">100 hours</td>
-                        <td class="diff-col positive" id="time-yearly-diff">-200 hours</td>
+                        <td class="current-col" data-label="Current Job" id="time-yearly-current">300 hours</td>
+                        <td class="new-col" data-label="New Offer" id="time-yearly-new">100 hours</td>
+                        <td class="diff-col positive" data-label="Difference" id="time-yearly-diff">-200 hours</td>
                     </tr>
                     <tr>
                         <td class="label-col">Work Hours per Week</td>
-                        <td class="current-col" id="time-work-current">32 hours</td>
-                        <td class="new-col" id="time-work-new">36 hours</td>
-                        <td class="diff-col negative" id="time-work-diff">+4 hours</td>
+                        <td class="current-col" data-label="Current Job" id="time-work-current">32 hours</td>
+                        <td class="new-col" data-label="New Offer" id="time-work-new">36 hours</td>
+                        <td class="diff-col negative" data-label="Difference" id="time-work-diff">+4 hours</td>
                     </tr>
                     <tr>
                         <td class="label-col">Miles per Day</td>
-                        <td class="current-col" id="time-miles-current">43 miles</td>
-                        <td class="new-col" id="time-miles-new">15.4 miles</td>
-                        <td class="diff-col positive" id="time-miles-diff">-27.6 miles</td>
+                        <td class="current-col" data-label="Current Job" id="time-miles-current">43 miles</td>
+                        <td class="new-col" data-label="New Offer" id="time-miles-new">15.4 miles</td>
+                        <td class="diff-col positive" data-label="Difference" id="time-miles-diff">-27.6 miles</td>
                     </tr>
                     <tr>
                         <td class="label-col">Miles per Year</td>
-                        <td class="current-col" id="time-milesyear-current">6,450 miles</td>
-                        <td class="new-col" id="time-milesyear-new">2,310 miles</td>
-                        <td class="diff-col positive" id="time-milesyear-diff">-4,140 miles</td>
+                        <td class="current-col" data-label="Current Job" id="time-milesyear-current">6,450 miles</td>
+                        <td class="new-col" data-label="New Offer" id="time-milesyear-new">2,310 miles</td>
+                        <td class="diff-col positive" data-label="Difference" id="time-milesyear-diff">-4,140 miles</td>
                     </tr>
                 </tbody>
                 <tfoot>
                     <tr>
                         <td class="label-col">Total Weekly Time (Work + Commute)</td>
-                        <td class="current-col" id="time-total-current">38 hours</td>
-                        <td class="new-col" id="time-total-new">38 hours</td>
-                        <td class="diff-col neutral" id="time-total-diff">0 hours</td>
+                        <td class="current-col" data-label="Current Job" id="time-total-current">38 hours</td>
+                        <td class="new-col" data-label="New Offer" id="time-total-new">38 hours</td>
+                        <td class="diff-col neutral" data-label="Difference" id="time-total-diff">0 hours</td>
                     </tr>
                 </tfoot>
             </table>
