@@ -453,6 +453,13 @@
                         <span>$<span id="current-toll-value">8.50</span></span>
                     </div>
                 </div>
+                <div class="input-group">
+                    <label>Commute Days per Week</label>
+                    <input type="range" id="current-commute-days" min="0" max="5" step="1" value="3">
+                    <div class="value-display">
+                        <span><span id="current-commute-days-value">3</span> days</span>
+                    </div>
+                </div>
             </div>
 
             <!-- New Offer -->
@@ -493,6 +500,13 @@
                         <span>$<span id="new-toll-value">0.00</span></span>
                     </div>
                 </div>
+                <div class="input-group">
+                    <label>Commute Days per Week</label>
+                    <input type="range" id="new-commute-days" min="0" max="5" step="1" value="3">
+                    <div class="value-display">
+                        <span><span id="new-commute-days-value">3</span> days</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -519,13 +533,6 @@
                     <input type="range" id="weeks" min="48" max="52" step="1" value="50">
                     <div class="value-display">
                         <span><span id="weeks-value">50</span> weeks</span>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label>Commute Days per Week</label>
-                    <input type="range" id="commute-days" min="1" max="5" step="1" value="3">
-                    <div class="value-display">
-                        <span><span id="commute-days-value">3</span> days</span>
                     </div>
                 </div>
             </div>
@@ -819,17 +826,18 @@
             const currentMiles = parseFloat(document.getElementById('current-miles').value);
             const currentTime = parseFloat(document.getElementById('current-time').value);
             const currentToll = parseFloat(document.getElementById('current-toll').value);
+            const currentCommuteDays = parseFloat(document.getElementById('current-commute-days').value);
 
             const newSalary = parseFloat(document.getElementById('new-salary').value);
             const newHours = parseFloat(document.getElementById('new-hours').value);
             const newMiles = parseFloat(document.getElementById('new-miles').value);
             const newTime = parseFloat(document.getElementById('new-time').value);
             const newToll = parseFloat(document.getElementById('new-toll').value);
+            const newCommuteDays = parseFloat(document.getElementById('new-commute-days').value);
 
             const gasPrice = parseFloat(document.getElementById('gas-price').value);
             const mpg = parseFloat(document.getElementById('mpg').value);
             const weeks = parseFloat(document.getElementById('weeks').value);
-            const commuteDays = parseFloat(document.getElementById('commute-days').value);
 
             // Calculate taxes for current job
             const currentFederal = calculateFederalTax(currentSalary);
@@ -838,13 +846,13 @@
             const currentAfterTax = currentSalary - currentFederal - currentState - currentFica;
 
             // Calculate commute costs for current job
-            const currentAnnualMiles = currentMiles * commuteDays * weeks;
+            const currentAnnualMiles = currentMiles * currentCommuteDays * weeks;
             const currentGasCost = (currentAnnualMiles / mpg) * gasPrice;
-            const currentTollCost = currentToll * commuteDays * weeks;
+            const currentTollCost = currentToll * currentCommuteDays * weeks;
             const currentNet = currentAfterTax - currentGasCost - currentTollCost;
 
             // Calculate commute time
-            const currentCommuteHours = (currentTime / 60) * commuteDays * weeks;
+            const currentCommuteHours = (currentTime / 60) * currentCommuteDays * weeks;
 
             // Calculate hourly rate
             const currentWorkedHours = currentHours * weeks;
@@ -857,13 +865,13 @@
             const newAfterTax = newSalary - newFederal - newState - newFica;
 
             // Calculate commute costs for new job
-            const newAnnualMiles = newMiles * commuteDays * weeks;
+            const newAnnualMiles = newMiles * newCommuteDays * weeks;
             const newGasCost = (newAnnualMiles / mpg) * gasPrice;
-            const newTollCost = newToll * commuteDays * weeks;
+            const newTollCost = newToll * newCommuteDays * weeks;
             const newNet = newAfterTax - newGasCost - newTollCost;
 
             // Calculate commute time
-            const newCommuteHours = (newTime / 60) * commuteDays * weeks;
+            const newCommuteHours = (newTime / 60) * newCommuteDays * weeks;
 
             // Calculate hourly rate
             const newWorkedHours = newHours * weeks;
@@ -910,16 +918,16 @@
             document.getElementById('time-saved').textContent = Math.round(timeSaved) + ' hours/year';
 
             // Update time savings table
-            const currentWeeklyCommute = (currentTime * commuteDays) / 60;
-            const newWeeklyCommute = (newTime * commuteDays) / 60;
+            const currentWeeklyCommute = (currentTime * currentCommuteDays) / 60;
+            const newWeeklyCommute = (newTime * newCommuteDays) / 60;
             const weeklyCommuteDiff = currentWeeklyCommute - newWeeklyCommute;
             
             const currentTotalWeekly = currentHours + currentWeeklyCommute;
             const newTotalWeekly = newHours + newWeeklyCommute;
             const totalWeeklyDiff = newTotalWeekly - currentTotalWeekly;
 
-            const milesPerYear = currentMiles * commuteDays * weeks;
-            const newMilesPerYear = newMiles * commuteDays * weeks;
+            const milesPerYear = currentMiles * currentCommuteDays * weeks;
+            const newMilesPerYear = newMiles * newCommuteDays * weeks;
             const milesDiff = currentMiles - newMiles;
             const milesYearDiff = milesPerYear - newMilesPerYear;
 
@@ -1030,17 +1038,18 @@
         setupSlider('current-miles', 'current-miles-value', v => v);
         setupSlider('current-time', 'current-time-value', v => v);
         setupSlider('current-toll', 'current-toll-value', v => parseFloat(v).toFixed(2));
+        setupSlider('current-commute-days', 'current-commute-days-value', v => v);
 
         setupSlider('new-salary', 'new-salary-value', v => formatNumber(v));
         setupSlider('new-hours', 'new-hours-value', v => v);
         setupSlider('new-miles', 'new-miles-value', v => v);
         setupSlider('new-time', 'new-time-value', v => v);
         setupSlider('new-toll', 'new-toll-value', v => parseFloat(v).toFixed(2));
+        setupSlider('new-commute-days', 'new-commute-days-value', v => v);
 
         setupSlider('gas-price', 'gas-price-value', v => parseFloat(v).toFixed(2));
         setupSlider('mpg', 'mpg-value', v => v);
         setupSlider('weeks', 'weeks-value', v => v);
-        setupSlider('commute-days', 'commute-days-value', v => v);
 
         // Initial calculation
         calculate();
