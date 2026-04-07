@@ -975,11 +975,13 @@
 
             // Update pros/cons dynamically
             updateProsCons(netDiff, timeSaved, currentTime, newTime, currentTollCost, newTollCost, 
-                          currentGasCost, newGasCost, currentHours, newHours, currentHourly, newHourly);
+                          currentGasCost, newGasCost, currentHours, newHours, currentHourly, newHourly,
+                          currentCommuteDays, newCommuteDays);
         }
 
         function updateProsCons(netDiff, timeSaved, currentTime, newTime, currentToll, newToll,
-                               currentGas, newGas, currentHours, newHours, currentHourly, newHourly) {
+                               currentGas, newGas, currentHours, newHours, currentHourly, newHourly,
+                               currentCommuteDays, newCommuteDays) {
             const prosList = document.getElementById('pros-list');
             const consList = document.getElementById('cons-list');
             
@@ -995,8 +997,12 @@
                 const pctShorter = ((currentTime - newTime) / currentTime * 100).toFixed(0);
                 pros.push(`${pctShorter}% shorter commute (${newTime} min vs ${currentTime} min)`);
             }
+            if (newCommuteDays < currentCommuteDays) {
+                pros.push(`Fewer office days (${newCommuteDays} vs ${currentCommuteDays} days/week)`);
+            }
             if (currentToll > newToll) {
-                pros.push(`No bridge toll (${formatCurrency(currentToll - newToll)} saved)`);
+                const tollSavings = (currentToll * currentCommuteDays - newToll * newCommuteDays) * 50; // annual estimate
+                pros.push(`${newToll === 0 ? 'No bridge toll' : 'Lower toll costs'} ($${tollSavings.toFixed(0)} saved/year)`);
             }
             if (currentGas > newGas) {
                 pros.push(`Lower gas costs (${formatCurrency(currentGas - newGas)} saved)`);
@@ -1004,8 +1010,10 @@
             if (newHours > currentHours) {
                 pros.push(`More hours per week (${newHours} vs ${currentHours})`);
             }
-            pros.push('Less wear on vehicle');
-            pros.push('Better work-life balance');
+            if (timeSaved > 0 || newCommuteDays < currentCommuteDays) {
+                pros.push('Less wear on vehicle');
+                pros.push('Better work-life balance');
+            }
 
             // Cons
             if (newHourly < currentHourly) {
@@ -1013,6 +1021,9 @@
             }
             if (newHours > currentHours) {
                 cons.push('More hours committed per week');
+            }
+            if (newCommuteDays > currentCommuteDays) {
+                cons.push(`More office days (${newCommuteDays} vs ${currentCommuteDays} days/week)`);
             }
             cons.push('0.9 FTE vs 0.8 FTE (more time commitment)');
 
